@@ -6,7 +6,7 @@ require("dotenv").config();
 
 function checkUsername(username) {
 	return new Promise((resolve) => {
-		db.query(`SELECT username, priv_add, priv_edit, priv_delete FROM user WHERE username = '${username}'`, (err, data) => {
+		db.query(`SELECT * FROM user WHERE username = '${username}'`, (err, data) => {
 			if (err) throw err;
 			resolve(data[0]);
 		});
@@ -44,8 +44,9 @@ module.exports = {
 			if (await checkPassword(username, password)) {
 				return new Promise((resolve) => {
 					resolve({
-						token: jwt.sign({ username: username, add: userData.priv_add, edit: userData.priv_edit, delete: userData.priv_delete, admin: username === "admin" ? true : false }, process.env.SECRET_KEY, {
-							expiresIn: "7d",
+						...userData,
+						token: jwt.sign({ username: username, admin: username === "admin" ? true : false }, process.env.SECRET_KEY, {
+							expiresIn: "365d",
 						}),
 					});
 				});

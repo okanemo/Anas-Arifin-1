@@ -7,6 +7,8 @@ module.exports = {
 		});
 	},
 	getProduct: (req, res) => {
+		console.log(req.session);
+		console.log(123);
 		product.getProduct(req.params.id).then((resolve) => {
 			res.json(resolve);
 		});

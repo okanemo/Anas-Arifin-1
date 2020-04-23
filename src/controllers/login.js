@@ -5,6 +5,7 @@ module.exports = {
 		login
 			.login(req.body.username, req.body.password)
 			.then((resolve) => {
+				req.session.token = resolve;
 				res.json(resolve);
 			})
 			.catch((reject) => {
@@ -20,5 +21,20 @@ module.exports = {
 			.catch((reject) => {
 				res.json({ error: reject });
 			});
+	},
+	verify: (req, res) => {
+		if (req.token) {
+			login
+				.login(req.body.username, req.body.password, req.token.username)
+				.then((resolve) => {
+					req.session.token = resolve;
+					res.json(resolve);
+				})
+				.catch((reject) => {
+					res.json({ error: reject });
+				});
+		} else {
+			res.json({ error: "Token invalid!" });
+		}
 	},
 };
