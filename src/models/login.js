@@ -1,11 +1,12 @@
 const db = require("../configs/database");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { json } = require("body-parser");
 require("dotenv").config();
 
 function checkUsername(username) {
 	return new Promise((resolve) => {
-		db.query(`SELECT username FROM user WHERE username = '${username}'`, (err, data) => {
+		db.query(`SELECT username, priv_add, priv_edit, priv_delete FROM user WHERE username = '${username}'`, (err, data) => {
 			if (err) throw err;
 			resolve(data[0]);
 		});
@@ -42,7 +43,11 @@ module.exports = {
 			// check if password is match with username
 			if (await checkPassword(username, password)) {
 				return new Promise((resolve) => {
-					resolve({ token: jwt.sign({ username: username, password: password, add: userData.priv_add, edit: userData.priv_edit, delete: userData.priv_delete, admin: username === "admin" ? true : false }, process.env.SECRET_KEY) });
+					resolve({
+						token: jwt.sign({ username: username, add: userData.priv_add, edit: userData.priv_edit, delete: userData.priv_delete, admin: username === "admin" ? true : false }, process.env.SECRET_KEY, {
+							expiresIn: "7d",
+						}),
+					});
 				});
 			}
 		}

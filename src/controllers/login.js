@@ -1,5 +1,5 @@
 const login = require("../models/login");
-
+console.log(login);
 module.exports = {
 	login: (req, res) => {
 		login
