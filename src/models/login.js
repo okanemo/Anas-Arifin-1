@@ -36,12 +36,12 @@ function hash(password) {
 }
 
 module.exports = {
-	login: async (username, password) => {
+	login: async (username, password, verifyUsername) => {
 		// check if username exist or not
+		console.log(verifyUsername);
 		const userData = await checkUsername(username);
 		if (userData) {
-			// check if password is match with username
-			if (await checkPassword(username, password)) {
+			if (verifyUsername) {
 				return new Promise((resolve) => {
 					resolve({
 						...userData,
@@ -50,6 +50,18 @@ module.exports = {
 						}),
 					});
 				});
+			} else {
+				// check if password is match with username
+				if (await checkPassword(username, password)) {
+					return new Promise((resolve) => {
+						resolve({
+							...userData,
+							token: jwt.sign({ username: username, admin: username === "admin" ? true : false }, process.env.SECRET_KEY, {
+								expiresIn: "365d",
+							}),
+						});
+					});
+				}
 			}
 		}
 		return new Promise((resolve, reject) => {

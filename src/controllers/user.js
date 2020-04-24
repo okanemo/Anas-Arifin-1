@@ -10,7 +10,7 @@ module.exports = {
 		user.getAllUser().then((resolve) => {
 			res.json(resolve);
 		});
-	},
+	},  
 	getUser: (req, res) => {
 		user.getUser(req.token ? req.token.username : req.params.username).then((resolve) => {
 			res.json(resolve);

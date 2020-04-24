@@ -5,7 +5,8 @@ module.exports = {
 		login
 			.login(req.body.username, req.body.password)
 			.then((resolve) => {
-				req.session.token = resolve;
+				console.log("token", resolve.token)
+				req.session.token = resolve.token;
 				res.json(resolve);
 			})
 			.catch((reject) => {
@@ -27,7 +28,7 @@ module.exports = {
 			login
 				.login(req.body.username, req.body.password, req.token.username)
 				.then((resolve) => {
-					req.session.token = resolve;
+					req.session.data = resolve;
 					res.json(resolve);
 				})
 				.catch((reject) => {
