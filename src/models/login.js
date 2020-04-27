@@ -38,15 +38,14 @@ function hash(password) {
 module.exports = {
 	login: async (username, password, verifyUsername) => {
 		// check if username exist or not
-		console.log(verifyUsername);
-		const userData = await checkUsername(username);
+		const userData = await checkUsername(username || verifyUsername);
 		if (userData) {
 			if (verifyUsername) {
 				return new Promise((resolve) => {
 					resolve({
 						...userData,
-						token: jwt.sign({ username: username, admin: username === "admin" ? true : false }, process.env.SECRET_KEY, {
-							expiresIn: "365d",
+						token: jwt.sign({ username: verifyUsername, add: userData.priv_add, edit: userData.priv_edit, delete: userData.priv_delete ,admin: verifyUsername === "admin" ? true : false }, process.env.SECRET_KEY, {
+							expiresIn: "30d",
 						}),
 					});
 				});
@@ -56,8 +55,8 @@ module.exports = {
 					return new Promise((resolve) => {
 						resolve({
 							...userData,
-							token: jwt.sign({ username: username, admin: username === "admin" ? true : false }, process.env.SECRET_KEY, {
-								expiresIn: "365d",
+							token: jwt.sign({ username: username, add: userData.priv_add, edit: userData.priv_edit, delete: userData.priv_delete, admin: username === "admin" ? true : false }, process.env.SECRET_KEY, {
+								expiresIn: "30d",
 							}),
 						});
 					});

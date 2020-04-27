@@ -7,8 +7,6 @@ module.exports = {
 		});
 	},
 	getProduct: (req, res) => {
-		console.log(req.session);
-		console.log(123);
 		product.getProduct(req.params.id).then((resolve) => {
 			res.json(resolve);
 		});
@@ -19,8 +17,11 @@ module.exports = {
 				error: "Access denied!",
 			});
 		} else {
-			product.addProduct(req.body).then((resolve) => {
-				console.log("ini : " + req.token.add);
+			const data = req.body;
+			if (req.file) {
+				data.image = req.file.filename || req.body.image;
+			}
+			product.addProduct(data).then((resolve) => {
 				res.json(resolve);
 			});
 		}
@@ -31,13 +32,19 @@ module.exports = {
 				error: "Access denied!",
 			});
 		} else {
-			product.editProduct(req.body, req.params.id).then((resolve) => {
-				res.json(resolve);
-			});
+			const data = req.body;
+			if (req.file) {
+				data.image = req.file.filename || req.body.image;
+			}
+			product
+				.editProduct(data, req.params.id)
+				.then((resolve) => {
+					res.json(resolve);
+				})
+				.catch((reject) => console.log(reject));
 		}
 	},
 	deleteProduct: (req, res) => {
-		console.log(req.token);
 		if (!req.token.delete) {
 			res.json({
 				error: "Access denied!",

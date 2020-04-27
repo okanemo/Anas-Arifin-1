@@ -1,4 +1,14 @@
 const db = require("../configs/database");
+const bcrypt = require("bcryptjs");
+
+function hash(password) {
+	return new Promise((resolve) => {
+		bcrypt.hash(password, 10, function (err, hash) {
+			if (err) throw err;
+			resolve(hash);
+		});
+	});
+}
 
 module.exports = {
 	getAllUser: () => {
@@ -21,9 +31,13 @@ module.exports = {
 			});
 		});
 	},
-	editUser: (data, username) => {
+	editUser: async (data, username) => {
+		const newData = { ...data };
+		if (data.password) {
+			newData.password = await hash(data.password);
+		}
 		return new Promise((resolve, reject) => {
-			db.query(`UPDATE user SET ? WHERE username = '${username}'`, data, (err, result) => {
+			db.query(`UPDATE user SET ? WHERE username = '${username}'`, newData, (err, result) => {
 				if (err) reject(new Error(err));
 				resolve(result);
 			});

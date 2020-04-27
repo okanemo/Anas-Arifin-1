@@ -7,17 +7,15 @@ const storage = multer.diskStorage({
 		callback(null, "./public/img/avatar");
 	},
 	filename: function (req, file, callback) {
-		callback(null, file.originalname);
+		callback(null, req.params.username + ".jpg");
 	},
 });
 const upload = multer({
 	storage: storage,
 });
 
-router.get("/", auth, user.getUser);
-router.get("/all", auth, user.getAllUser);
+router.get("/", auth, user.getAllUser);
 router.get("/:username", user.getUser);
-router.post("/", auth, upload.single("avatar"), user.editUser);
 router.patch("/:username", auth, upload.single("avatar"), user.editUser);
 router.delete("/", auth, user.deleteUser);
 

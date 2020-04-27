@@ -1,11 +1,10 @@
 const login = require("../models/login");
-console.log(login);
+
 module.exports = {
 	login: (req, res) => {
 		login
 			.login(req.body.username, req.body.password)
 			.then((resolve) => {
-				console.log("token", resolve.token)
 				req.session.token = resolve.token;
 				res.json(resolve);
 			})
@@ -28,7 +27,7 @@ module.exports = {
 			login
 				.login(req.body.username, req.body.password, req.token.username)
 				.then((resolve) => {
-					req.session.data = resolve;
+					// req.session.token = "berubah lu";
 					res.json(resolve);
 				})
 				.catch((reject) => {
@@ -37,5 +36,9 @@ module.exports = {
 		} else {
 			res.json({ error: "Token invalid!" });
 		}
+	},
+	logout: (req, res) => {
+		req.session = null;
+		res.json("Logout success!");
 	},
 };
